@@ -315,18 +315,7 @@
   _.memoize = function(func) {
     var results = {};
     return function () {
-      var args = Array.prototype.slice.call(arguments);
-      var key = '' + arguments.length + ':' + args.toString();
-      // Could still fail the last test
-      //    "should run the memoized function twice when given an array and
-      //    then given a list of arguments" with, for instance, a function that
-      //    adds all inputs whether in arrays or not and was called with
-      //    memoAdd([1,2,3],4) and memoAdd([1,2],[3,4]).
-      // Both calls would produce the same key ("2:1,2,3,4") and the function
-      //    would only be called once, but it seems like the spirit of the test
-      //    is that it is called twice.
-      // What we need is a way to just hash the arguments data without any string
-      //    conversion first.
+      var key = JSON.stringify(arguments);
       if (!(key in results)) { 
         results[key] = func.apply(this, arguments);
       }
@@ -361,6 +350,19 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var remain = Array.prototype.slice.call(array);
+    var result = [];
+    while (remain.length > 0) {
+      var ind = Math.floor(Math.random()*remain.length);
+      result.push(remain[ind]);
+      var old = Array.prototype.slice.call(remain);
+      remain = old.slice(0,ind);
+      var rest = old.slice(ind+1);
+      for (var i = 0; i < rest.length; i++) {
+        remain.push(rest[i]);
+      }
+    }
+    return result;
   };
 
 
