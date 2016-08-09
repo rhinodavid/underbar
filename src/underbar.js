@@ -313,6 +313,25 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var results = {};
+    return function () {
+      var args = Array.prototype.slice.call(arguments);
+      var key = '' + arguments.length + ':' + args.toString();
+      // Could still fail the last test
+      //    "should run the memoized function twice when given an array and
+      //    then given a list of arguments" with, for instance, a function that
+      //    adds all inputs whether in arrays or not and was called with
+      //    memoAdd([1,2,3],4) and memoAdd([1,2],[3,4]).
+      // Both calls would produce the same key ("2:1,2,3,4") and the function
+      //    would only be called once, but it seems like the spirit of the test
+      //    is that it is called twice.
+      // What we need is a way to just hash the arguments data without any string
+      //    conversion first.
+      if (!(key in results)) { 
+        results[key] = func.apply(this, arguments);
+      }
+      return results[key];
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
