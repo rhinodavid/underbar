@@ -417,5 +417,29 @@
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
+  // make time variable that represents when the function was called last
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/now
+  var lastCalledTime;
+
+  var throttledFunction = function() {
+    // when the returned function is called, check to see if the duration has been met
+      if(!lastCalledTime) {
+      // set lastCalledTime to right now
+      lastCalledTime = Date.now();
+      // call the function
+      func.apply(this, arguments);
+      } else {
+      // lastCalledTime does exist
+      // check to see if the time has ber evn aet
+        var diff = Date.now() - lastCalledTime;
+        if (diff >= duration) {
+          // if it has, reset last called time and call function
+          lastCalledTime = Date.now();
+          func.apply(this, arguments);
+       }
+      }
+    };
+    return throttledFunction;
   };
 }());
