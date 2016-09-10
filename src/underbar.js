@@ -378,15 +378,14 @@
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
     if(typeof functionOrKey === 'function') {
-      _.each(collection, function(item, key, collection){
-        collection[key] = functionOrKey.apply(item, args);
+      return _.map(collection, function(item, key, collection){
+        return functionOrKey.apply(item, args);
       });
     } else {
-      _.each(collection, function(item, key, collection){
-        collection[key] = item[functionOrKey].apply(item, args);
+      return _.map(collection, function(item, key, collection){
+        return item[functionOrKey].apply(item, args);
       });
     }
-    return collection;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
